@@ -22,6 +22,7 @@ def printb():
     BLEN = 0
     return 0
 
+
 def buffer_add(mword):
     """
     recive word if buffer_add is full it prints
@@ -32,6 +33,7 @@ def buffer_add(mword):
     BUF.append(mword)
     return BLEN + mword.__len__() + 1
 
+
 with open(sys.argv[2]) as FIL:
     for line in FIL:
         for word in line.split():
@@ -39,4 +41,3 @@ with open(sys.argv[2]) as FIL:
 
 if BUF.__len__() > 0:
     printb()
-

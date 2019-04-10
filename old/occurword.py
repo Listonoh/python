@@ -1,10 +1,7 @@
 """
 ocurance of words
 """
-
-import sys
-
-
+# import sys
 #READER = open(sys.argv[1], mode='r')
 
 DIC = {}

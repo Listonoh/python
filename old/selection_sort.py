@@ -1,5 +1,6 @@
+
 """
-kecy je to selection sort
+selection sort
 """
 
 x = [2, 4, 4, 2, 0, 9, 8]
