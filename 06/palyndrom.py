@@ -7,5 +7,9 @@ def isPalyndrom(strg):
             return False
     return True
 
-s = "aaaahaaa"
+def better_palyndrom(wrd):
+    return wrd == wrd[::-1]
+
+s = "aaaa haaaa"
 print(isPalyndrom(s))
+print(better_palyndrom(s))
