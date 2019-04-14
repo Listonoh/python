@@ -1,0 +1,26 @@
+[
+	{
+		"name": "st0",
+		"from": "0",
+		"to_state": "st0",
+		"Instruction": "$MVR"
+	},
+	{
+		"name": "st0",
+		"from": "1",
+		"to_state": "st1" ,
+		"Instruction": "$MVR"
+	},
+	{
+		"name": "st1",
+		"from": "0",
+		"to_state": "st1",
+		"Instruction": "$MVR"
+	},
+	{
+		"name": "st1",
+		"from": "1",
+		"to_state": "st0",
+		"Instruction": "$MVR"
+	}
+]
