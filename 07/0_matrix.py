@@ -17,9 +17,20 @@ class matrix:
             print()
 
 
+    def check(self, second):
+            if self.x != second.x & self.y != second.y:
+                raise ValueError()
+
     def __add__(self, second):
-        if self.x != second.x & self.y != second.y:
-            raise ValueError()
+        self.check(second)
+        temp = matrix(self.x, self.y)
+        for i in range(self.x ):
+            for j in range(self.y):
+                temp.__modify__(i,j, self.val[i][j] + second.val[i][j])
+        return temp
+
+    def __multiply__(self, second):
+        self.check(second)
         temp = matrix(self.x, self.y)
         for i in range(self.x):
             for j in range(self.y):
