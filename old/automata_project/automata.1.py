@@ -29,18 +29,30 @@ class automaton:
             if instruction[0] == text[stat[1]]:
                 print(f">instruction: {instruction}")
                 if instruction[2] == "MVR":
-                    self.state.append((instruction[1], stat[1] + 1))
-                    print(f">>appending: {(instruction[1], stat[1] + 1)}", end="\n\n")
+                    self.state.append((instruction[1], stat[1][0] + 1))
+                    print(f">>appending: {(instruction[1], stat[1][0] + 1)}", end="\n\n")
         print("----------------------")            
+
 
     def move3(self, text, stat):
         posibilites = self.mess["instructions"][stat[0]]
-        for inst in posibilites[text[stat[1]]]:
-            print(f">instruction: {text[stat[1]]} -> {inst}")
+        window = self.get_window(text, stat[1])
+        for inst in posibilites[window]:
+            print(f">instruction: {window} -> {inst}")
             if inst[1] == "MVR":
-                self.state.append((inst[0], stat[1] + 1))
-                print(f">>appending: {(inst[0], stat[1] + 1)}", end="\n\n")
+                self.state.append((inst[0], [stat[1][0] + 1]))
+                print(f">>appending: {(inst[0], [stat[1][0] + 1])}", end="\n\n")
+        print("----------------------")
 
+
+    def get_window(self, text, tuple_of_size):
+        if len(tuple_of_size) == 1:
+            return text[tuple_of_size[0]]
+        elif len(tuple_of_size) > 1:
+            return text[tuple_of_size[0]:tuple_of_size[1]]
+        raise IndexError()
+
+        
 
     def iterateText(self, text):
         while True:
@@ -64,4 +76,5 @@ print(aut1.is_in_alphabet("0"))
 print(aut1.is_in_alphabet("a"))
 text = "baaababa"
 print(f"iteratin {text}")
+print("---------------------")
 print(aut1.iterateText(text))

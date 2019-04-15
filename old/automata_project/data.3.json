@@ -1,4 +1,4 @@
-{ "s0" : ["st0", 0],
+{ "s0" : ["st0", [0]],
 	"alfabet" : ["a", "b"],
 	"sA" : ["st0"],
 	"instructions" : 	
