@@ -20,14 +20,8 @@ def mrange(*args):
 
 
 # testing data
-lis = list(i for i in mrange(10))
-print(lis)
 
-lis = list(i for i in mrange(1, 10))
-print(lis)
-
-lis = list(i for i in mrange(10, 1, -1))
-print(lis)
-
-lis = list(i for i in range(10, 1, -1))
-print(lis)
+print(list(i for i in mrange(10)))
+print(list(i for i in mrange(1, 10)))
+print(list(i for i in mrange(10, 1, -1)))
+print(list(i for i in range(10, 1, -1)))
