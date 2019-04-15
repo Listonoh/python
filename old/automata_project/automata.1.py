@@ -35,14 +35,11 @@ class automaton:
 
     def move3(self, text, stat):
         posibilites = self.mess["instructions"][stat[0]]
-        for posible_window in posibilites:
-            if posible_window == text[stat[1]]:     #vezme kus textu a porovna ho s moznostma 
-                print(f"----- {posible_window} -- {posibilites[posible_window]}")
-                for inst in posibilites[posible_window]:
-                    print(f">instruction: {posible_window} -> {inst}")
-                    if inst[1] == "MVR":
-                        self.state.append((inst[0], stat[1] + 1))
-                        print(f">>appending: {(inst[0], stat[1] + 1)}", end="\n\n")
+        for inst in posibilites[text[stat[1]]]:
+            print(f">instruction: {text[stat[1]]} -> {inst}")
+            if inst[1] == "MVR":
+                self.state.append((inst[0], stat[1] + 1))
+                print(f">>appending: {(inst[0], stat[1] + 1)}", end="\n\n")
 
 
     def iterateText(self, text):
