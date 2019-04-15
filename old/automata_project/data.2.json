@@ -1,10 +1,9 @@
-{ "s0" : ["st0"],
+{ "s0" : ["st0", 0],
 	"alfabet" : ["a", "b"],
 	"sA" : ["st0"],
 	"instructions" : 	
 	{ 	
-		"st0": { "a" : ["st0","MVR"], "b": ["st1","MVR"]},
-		"st1": { "a" : ["st1","MVR"], "b": ["st0","MVR"]},
-		"stn": [ ["a","st1","MVR"], ["a","st0","MVR"], ["b","st0","MVR"]]
+		"st1": [ ["a", "st1", "MVR"], ["b", "st0", "MVR"]],
+		"st0": [ ["a","st1","MVR"], ["a","st0","MVR"], ["b","st0","MVR"]]
 	}
 }

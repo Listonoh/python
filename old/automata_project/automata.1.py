@@ -2,10 +2,11 @@ import itertools
 import json
 
 class automaton:
+    # state - list of tuples (state, position)
     def __init__(self, file):
         with open(file, mode='r') as inp:
             self.mess = json.load(inp)
-        self.state = self.mess["s0"][0] # for deterministic ..
+        self.state = [(self.mess["s0"][0], self.mess["s0"][1])]
 
 
     def is_in_alphabet(self, ch):
@@ -15,26 +16,34 @@ class automaton:
         return False
 
 
-    def is_accepting_state(self):
+    def is_accepting_state(self, state):
         for i in self.mess["sA"]:
-            if i == self.state:
+            if i == state:
                 return True
         return False
 
 
-    def move(self, mtuple):
-        self.state = mtuple[0]
-        instruction = mtuple[1]
-        if instruction == "MVR":
-            self.position += 1
+    def move(self, mtuple, text, stat):
+        for instruction in mtuple[stat[0]]:
+            if instruction[0] == text[stat[1]]:
+                print(f">instruction: {instruction}")
+                if instruction[2] == "MVR":
+                    self.state.append((instruction[1], stat[1] + 1))
+                    print(f">>appending: {(instruction[1], stat[1] + 1)}", end="\n\n")
+        print("----------------------")            
+                
 
     def iterateText(self, text):
-        self.position = 0
         while True:
             try:
-                self.mmove(self.mess["instructions"][self.state][text[self.position]])
+                s = self.state.pop()
+                print(f"     > taking state : {s}")
+                self.move(self.mess["instructions"], text, s)
             except:
-                return self.is_accepting_state()
+                if self.is_accepting_state(s[0]):
+                    return True
+                elif self.state.__len__() == 0:
+                    return False
 
 
 
