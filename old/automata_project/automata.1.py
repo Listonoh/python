@@ -31,10 +31,12 @@ class automaton:
                 if instruction[2] == "MVR":
                     self.state.append((instruction[1], stat[1][0] + 1))
                     print(f">>appending: {(instruction[1], stat[1][0] + 1)}", end="\n\n")
+                # rewrite petr somal 
         print("----------------------")            
 
 
     def move3(self, text, stat):
+        # mk seznam objektu-stringu
         posibilites = self.mess["instructions"][stat[0]]
         window = self.get_window(text, stat[1])
         for inst in posibilites[window]:
@@ -72,6 +74,7 @@ class automaton:
 
 aut1 = automaton("data.3.json")
 
+aut1.add_instruction("x,y,z : d(q,[x,y,z]) -> (q,[x,y]) ")
 print(aut1.is_in_alphabet("0"))
 print(aut1.is_in_alphabet("a"))
 text = "baaababa"
