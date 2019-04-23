@@ -33,6 +33,16 @@ class matrix:
         return temp
 
 
+        def __eq_(self, second):
+        if self.x != second.x & self.y != second.y:
+            return False
+
+        for i in range(self.x ):
+            for j in range(self.y):
+                if self.val[i][j] != second.val[i][j]:
+                    return False
+        return True
+
     def __mul__(self, second):
         if self.x != second.y & self.y != second.y:
                 raise ValueError()
@@ -45,6 +55,9 @@ class matrix:
         result = [[self.val[i][j] * numb for j in range(self.x)] for i in range(self.y)]
         return matrix().init_thru_matrix(result)
 
+    def __radd__(self, numb): 
+        result = [[self.val[i][j] + numb for j in range(self.x)] for i in range(self.y)]
+        return matrix().init_thru_matrix(result)
 
 m = matrix(3,3)
 m.__modify__(1,1,1)

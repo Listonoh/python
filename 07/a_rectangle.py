@@ -9,12 +9,35 @@ class rectangle:
         self.set_size(x,y)
 
 
+    def __eq__(self, oter):
+        return self.area() == oter.area()
+
+    def __lt__(self, oter):
+        return self.area() < oter.area()
+
+    
+    def __le__(self, oter):
+        return self.area() <= oter.area()
+
+    def __gt__(self, oter):
+        return self.area() > oter.area()
+
+    
+    def __ge__(self, oter):
+        return self.area() >= oter.area()
+
     def set_size(self, x, y):
         self.width, self.height = x, y
     
 
 
 r = rectangle(5,4)
-print(r.area())
+d = rectangle(4,9)
 r.set_size(9,4)
+
+print(r<d)
+print(r<=d)
+print(r>d)
+print(r>=d)
+print(r==d)
 print(r.area())
