@@ -72,7 +72,7 @@ class automaton:
 
 
 
-aut1 = automaton("data.3.json")
+aut1 = automaton("data.json")
 
 #aut1.add_instruction("x,y,z : d(q,[x,y,z]) -> (q,[x,y]) ")
 print(aut1.is_in_alphabet("0"))

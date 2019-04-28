@@ -1,9 +1,0 @@
-[
-	{ "s0" : ["st0"]},
-	{ "alfabet" : ["0", "1"]},
-	{ "acc_state" : ["st0"]},
-	{ "name" : ["st0", "st1"] },
-	{ "from" : [0, 1] },
-	{ "to" : [["st0", "st1"], ["st1", "st0"]] },
-	{ "Instruction" : [["MVR", "MVR"], ["MVR", "MVR"]]}
-]
