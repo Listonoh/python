@@ -1,13 +1,20 @@
 import itertools
 import json
 
+class status:
+    def __init__(self, state, position, num_text):
+        self.state, self.position, self.num_text = state, position, num_text
+    
+
+    def __str__(self):
+        return f"state: {self.state}, position: {self.position}, num_text: {self.num_text} "
+
+
 class automaton:
-    # state - list of tuples (state, position)
     def __init__(self, file):
         with open(file, mode='r') as inp:
             self.mess = json.load(inp)
-        print(self.mess["instructions"]["st1"]['a'])
-        self.state = [(self.mess["s0"][0], self.mess["s0"][1])]
+        self.stats = [ status(self.mess["s0"][0], self.mess["s0"][1], 0)]
 
 
     def is_in_alphabet(self, ch):
@@ -18,66 +25,130 @@ class automaton:
 
 
     def is_accepting_state(self, state):
-        for i in self.mess["sA"]:
+        for i in self.mess["sAcc"]:
             if i == state:
                 return True
-        return False
+        return False       
 
 
-    def move(self, mtuple, text, stat):
-        for instruction in mtuple[stat[0]]:
-            if instruction[0] == text[stat[1]]:
-                print(f">instruction: {instruction}")
-                if instruction[2] == "MVR":
-                    self.state.append((instruction[1], stat[1][0] + 1))
-                    print(f">>appending: {(instruction[1], stat[1][0] + 1)}", end="\n\n")
-                # rewrite petr somal 
-        print("----------------------")            
+    def make_instruction(self, instruction, new_state, stat):
+        if instruction == "MVR":
+            s = status(new_state, stat.position + 1, stat.num_text)
+            self.stats.append( s)
+            return
+        elif instruction == "RES":
+            s = status(new_state, 0, stat.num_text)
+            self.stats.append( s)
+            return
+        elif instruction == "REM":
+            new_list = list(self.texts[stat.num_text])
+            del new_list[stat.position]
+            self.texts.append(new_list)
+
+            s = status(new_state, stat.position, len(self.texts) -1)
+            self.stats.append( s)
+            return
+        elif self.is_in_alphabet(instruction):
+            new_list = self.texts[stat.num_text].copy()
+            new_list[stat.position] = instruction
+            self.texts.append(new_list)
+
+            s = status(new_state, stat.position, len(self.texts) -1)
+            self.stats.append(s)
+            return
 
 
-    def move3(self, text, stat):
+    def add_instruction(self, from_state, value, to_state, instruction):
+        for i in self.mess["instructions"][from_state][value]:
+            if i == [to_state, instruction]:
+                return
+        self.mess["instructions"][from_state][value].append([to_state, instruction])
+
+    def replace_instructions(self, from_state, value, to_state, instruction):
+        self.mess["instructions"][from_state][value] = [[to_state, instruction]]
+
+    def move(self, window, stat):
         # mk seznam objektu-stringu
-        posibilites = self.mess["instructions"][stat[0]]
-        window = self.get_window(text, stat[1])
-        for inst in posibilites[window]:
-            print(f">instruction: {window} -> {inst}")
-            if inst[1] == "MVR":
-                self.state.append((inst[0], [stat[1][0] + 1]))
-                print(f">>appending: {(inst[0], [stat[1][0] + 1])}", end="\n\n")
-        print("----------------------")
+        posibilites = self.mess["instructions"][stat.state]
+        for posibility in posibilites[window]:
+            print(f">instruction: {window} -> new_state: {posibility[0]}, instruction: {posibility[1]}  " )
+            self.make_instruction(posibility[1], posibility[0], stat)
+        print("----------------------------------", end="\n\n")
+            
+
+    def get_window(self, text, position):
+        return text[position]
 
 
-    def get_window(self, text, tuple_of_size):
-        if len(tuple_of_size) == 1:
-            return text[tuple_of_size[0]]
-        elif len(tuple_of_size) > 1:
-            return text[tuple_of_size[0]:tuple_of_size[1]]
-        raise IndexError()
+    def concat_text(self, text):
+        newtext = []
+        ctr = 0
+        strg = ""
+        for i in text:
+            if i == "[":
+                ctr +=1
+            elif i == "]":
+                ctr -=1
+            strg += i
+            if ctr == 0:
+                newtext.append(strg)
+                strg = ""
+        if ctr != 0:
+            raise ImportWarning("[] are not in pairs")
+        return newtext
 
-        
 
     def iterateText(self, text):
+        self.texts = [self.concat_text(text)]
+        print(self.texts[0])
         while True:
             try:
-                s = self.state.pop()
-                print(f"     > taking state : {s}")
-                self.move3(text, s)
-                #self.move(self.mess["instructions"], text, s)
+                s = self.stats.pop()
+                print(f"     > taking status : {s}")
+                window = self.get_window(self.texts[s.num_text], s.position)
+                print(f" text: {self.texts[s.num_text]}")
+                print(f" window: {window}")
+                self.move(window, s)
             except:
-                if self.is_accepting_state(s[0]):
-                    print(f"remaining tuples = {self.state}")
+                if self.is_accepting_state(s.state):
+                    print(f"remaining tuples = {self.stats}")
+                    print(f"number of copies of text = {len(self.texts)}")
                     return True
-                elif self.state.__len__() == 0:
+                elif self.stats.__len__() == 0:
                     return False
 
 
+    def print_instructions(self):
+        for state in self.mess["instructions"]:
+            print(f"states: {state}: <" , end="")
+            for value in self.mess["instructions"][state]:
+                print(f" \"{value}\" : [", end = "")
+                for instruct in self.mess["instructions"][state][value]:
+                    print(f"{instruct}", end = "")
+                print("]", end ="")
+            print(">")
+
+
+    def save_to_instructions(self, to):
+        with open(to, "w") as to_file:
+            json.dump(self.mess, to_file)  
+
+
+    def is_deterministic(self):
+        for state in self.mess["instructions"]:
+            for value in self.mess["instructions"][state]:
+                if len(self.mess["instructions"][state][value]) > 1:
+                    return False
+        return True
 
 aut1 = automaton("data.json")
 
-#aut1.add_instruction("x,y,z : d(q,[x,y,z]) -> (q,[x,y]) ")
-print(aut1.is_in_alphabet("0"))
-print(aut1.is_in_alphabet("a"))
-text = "baaababa"
-print(f"iteratin {text}")
-print("---------------------")
-print(aut1.iterateText(text))
+aut1.replace_instructions("st0", "b", "st0", "MVR")
+aut1.add_instruction("st0", "b", "st0", "MVR")
+aut1.print_instructions()
+aut1.save_to_instructions("data.1.json")
+print(aut1.is_deterministic())
+#text = "baa[a,b]aba"
+#print(f"iteratin {text}")
+#print("---------------------")
+#print(aut1.iterateText(text))
