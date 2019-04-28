@@ -11,9 +11,10 @@ class status:
 
 
 class automaton:
-    def __init__(self, file):
+    def __init__(self, file, size_of_window = 1):
         with open(file, mode='r') as inp:
             self.mess = json.load(inp)
+        self.size_of_window = size_of_window
         self.stats = [ status(self.mess["s0"][0], self.mess["s0"][1], 0)]
 
 
@@ -31,7 +32,7 @@ class automaton:
         return False       
 
 
-    def make_instruction(self, instruction, new_state, stat):
+    def make_instruction(self, instruction, new_state, stat): #beware not functioning for window >1
         if instruction == "MVR":
             s = status(new_state, stat.position + 1, stat.num_text)
             self.stats.append( s)
@@ -40,7 +41,7 @@ class automaton:
             s = status(new_state, 0, stat.num_text)
             self.stats.append( s)
             return
-        elif instruction == "REM":
+        elif instruction == "REM": 
             new_list = list(self.texts[stat.num_text])
             del new_list[stat.position]
             self.texts.append(new_list)
@@ -77,8 +78,11 @@ class automaton:
             
 
     def get_window(self, text, position):
-        return text[position]
-
+        if self.size_of_window == 1:
+            return text[position]
+        elif self.size_of_window < 1:
+            raise IndexError()
+        return str(text[position : position + self.size_of_window]) # so it returns something like ["a", "b"]
 
     def concat_text(self, text):
         newtext = []
