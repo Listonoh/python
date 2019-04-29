@@ -32,7 +32,7 @@ class automaton:
         return False       
 
 
-    def make_instruction(self, instruction, new_state, stat): #beware not functioning for window >1
+    def __make_instruction(self, instruction, new_state, stat): #beware not functioning for window >1
         if instruction == "MVR":
             s = status(new_state, stat.position + 1, stat.num_text)
             self.stats.append( s)
@@ -47,7 +47,7 @@ class automaton:
             self.texts.append(new_list)
 
             s = status(new_state, stat.position, len(self.texts) -1)
-            self.stats.append( s)
+            self.stats.append(s)
             return
         elif self.is_in_alphabet(instruction):
             new_list = self.texts[stat.num_text].copy()
@@ -69,11 +69,10 @@ class automaton:
         self.mess["instructions"][from_state][value] = [[to_state, instruction]]
 
     def move(self, window, stat):
-        # mk seznam objektu-stringu
         posibilites = self.mess["instructions"][stat.state]
         for posibility in posibilites[window]:
             print(f">instruction: {window} -> new_state: {posibility[0]}, instruction: {posibility[1]}  " )
-            self.make_instruction(posibility[1], posibility[0], stat)
+            self.__make_instruction(posibility[1], posibility[0], stat)
         print("----------------------------------", end="\n\n")
             
 
@@ -133,7 +132,7 @@ class automaton:
             print(">")
 
 
-    def save_to_instructions(self, to):
+    def save_instructions(self, to):
         with open(to, "w") as to_file:
             json.dump(self.mess, to_file)  
 
@@ -144,15 +143,19 @@ class automaton:
                 if len(self.mess["instructions"][state][value]) > 1:
                     return False
         return True
+    
+    def clear(self):
+        self.mess = {}
 
 aut1 = automaton("data.json")
 
 aut1.replace_instructions("st0", "b", "st0", "MVR")
 aut1.add_instruction("st0", "b", "st0", "MVR")
+aut1.clear()
 aut1.print_instructions()
-aut1.save_to_instructions("data.1.json")
+aut1.save_instructions("data.1.json")
 print(aut1.is_deterministic())
-#text = "baa[a,b]aba"
-#print(f"iteratin {text}")
-#print("---------------------")
-#print(aut1.iterateText(text))
+text = "baa[a,b]aba"
+print(f"iteratin {text}")
+print("---------------------")
+print(aut1.iterateText(text))
