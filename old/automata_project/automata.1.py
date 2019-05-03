@@ -2,12 +2,12 @@ import itertools
 import json
 
 class status:
-    def __init__(self, state, position, num_text):
-        self.state, self.position, self.num_text = state, position, num_text
-    
+    def __init__(self, state, position, text_version):
+        self.state, self.position, self.text_version = state, position, text_version
+
 
     def __str__(self):
-        return f"state: {self.state}, position: {self.position}, num_text: {self.num_text} "
+        return f"state: {self.state}, position: {self.position}, text_version: {self.text_version} "
 
 
 class automaton:
@@ -33,25 +33,29 @@ class automaton:
 
 
     def __make_instruction(self, instruction, new_state, stat): #beware not functioning for window >1
+        pos = stat.position
+        end_of_pos = self.size_of_window + pos
+
         if instruction == "MVR":
-            s = status(new_state, stat.position + 1, stat.num_text)
+            s = status(new_state, pos + 1, stat.text_version)
             self.stats.append( s)
             return
         elif instruction == "RES":
-            s = status(new_state, 0, stat.num_text)
+            s = status(new_state, 0, stat.text_version)
             self.stats.append( s)
             return
         elif instruction == "REM": 
-            new_list = list(self.texts[stat.num_text])
-            del new_list[stat.position]
+            new_list = list(self.texts[stat.text_version])
+            del new_list[pos:end_of_pos]
             self.texts.append(new_list)
 
             s = status(new_state, stat.position, len(self.texts) -1)
             self.stats.append(s)
             return
-        elif self.is_in_alphabet(instruction):
-            new_list = self.texts[stat.num_text].copy()
-            new_list[stat.position] = instruction
+        elif instruction == "R":
+            new_list = self.texts[stat.text_version].copy()
+            
+            new_list[pos: end_of_pos] = new_values
             self.texts.append(new_list)
 
             s = status(new_state, stat.position, len(self.texts) -1)
@@ -77,21 +81,17 @@ class automaton:
             
 
     def get_window(self, text, position):
-        if self.size_of_window == 1:
-            return text[position]
-        elif self.size_of_window < 1:
-            raise IndexError()
-        return str(text[position : position + self.size_of_window]) # so it returns something like ["a", "b"]
+        end_of_pos = position + self.size_of_window
+        return str(text[position:end_of_pos])
+        #return str(text[position : position + self.size_of_window]) # so it returns something like ["a", "b"]
 
     def concat_text(self, text):
         newtext = []
         ctr = 0
         strg = ""
         for i in text:
-            if i == "[":
-                ctr +=1
-            elif i == "]":
-                ctr -=1
+            if i == "[": ctr +=1
+            elif i == "]": ctr -=1
             strg += i
             if ctr == 0:
                 newtext.append(strg)
@@ -108,8 +108,8 @@ class automaton:
             try:
                 s = self.stats.pop()
                 print(f"     > taking status : {s}")
-                window = self.get_window(self.texts[s.num_text], s.position)
-                print(f" text: {self.texts[s.num_text]}")
+                window = self.get_window(self.texts[s.text_version], s.position)
+                print(f" text: {self.texts[s.text_version]}")
                 print(f" window: {window}")
                 self.move(window, s)
             except:
