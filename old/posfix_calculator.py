@@ -5,19 +5,25 @@ posfix calculator
 import sys
 
 
-def calculate(mylist):
-    """
-    posfix calculator
-    """
-    stack = []
-    for i in mylist:
-        if i.isnumeric():
-            stack.append(i)
-            print(f"apending {i}")
-        else:
-            stack.append(str(eval(stack.pop() + i + stack.pop())))
-    return stack.pop()
+def calculate(line):
+    try:
+        arr_line = line.split()
+        stack = []
+        for value in arr_line:
+            if value in "+-*/":
+                frs, scn = stack.pop(), stack.pop()
+                strk = f"{scn} {value} {frs}"
+                stack.append(int(eval(strk)))
+            else:
+                stack.append(value)
+        return int(stack.pop()) if len(stack) == 1 else "Malformed expression"
+    except ZeroDivisionError:
+        return "Zero division"
+    except:
+        return "Malformed expression"
 
 
-A = calculate(sys.argv[1:])
-print(A)
+if __name__ == "__main__":
+    for line in sys.stdin:
+        if line.strip() != "":
+            print(calculate(line))

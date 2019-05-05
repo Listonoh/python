@@ -5,7 +5,7 @@ justyfy
 
 import sys
 
-class buffer:
+class printer:
     def __init__(self, max_size):
         self.size = 0
         self.max_size = max_size
@@ -42,12 +42,12 @@ if len(sys.argv) != 2 or not sys.argv[1].isnumeric() or int(sys.argv[1]) < 1:
     exit()
 
 if __name__ == "__main__":
-    buffer = buffer(int(sys.argv[1]))
+    printer1 = printer(int(sys.argv[1]))
     for line in sys.stdin:
         if line.strip() == "":
-            buffer.flush(True)
+            printer1.flush(True)
         else:
             for word in line.split():
-                buffer.add(word)
-    buffer.flush(True)
+                printer1.add(word)
+    printer1.flush(True)
 
