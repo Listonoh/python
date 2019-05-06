@@ -6,17 +6,19 @@ class status:
     def __init__(self, state, position, text_version):
         self.state, self.position, self.text_version = state, position, text_version
 
-
     def __str__(self):
         return f"state: {self.state}, position: {self.position}, text_version: {self.text_version} "
 
 
+
 class automaton:
-    def __init__(self, file, size_of_window = 1):
+    def __init__(self, file):
         with open(file, mode='r') as inp:
             self.mess = json.load(inp)
-        self.size_of_window = size_of_window
+        print(self.mess)
+        self.size_of_window = self.mess["size_of_window"]
         self.stats = [ status(self.mess["s0"][0], self.mess["s0"][1], 0)]
+
 
 
     def is_in_alphabet(self, ch):
@@ -53,12 +55,13 @@ class automaton:
             s = status(new_state, stat.position, len(self.texts) -1)
             self.stats.append(s)
             return
-        elif re.match(r"^\[.*\]$"):
+        elif re.match(r"^\[.*\]$", instruction):
             new_list = self.texts[stat.text_version].copy()
             new_values = eval(instruction)
             new_list[pos: end_of_pos] = new_values
 
             self.texts.append(new_list)
+            self.paths_of_stats.append(f"{self.paths_of_stats[stat.text_version]} -> \n {new_list}" )
             s = status(new_state, stat.position, len(self.texts) -1)
             self.stats.append(s)
             return
@@ -84,9 +87,8 @@ class automaton:
     def get_window(self, text, position):
         end_of_pos = position + self.size_of_window
         return str(text[position:end_of_pos])
-        #return str(text[position : position + self.size_of_window]) # so it returns something like ["a", "b"]
 
-    def concat_text(self, text):
+    def __concat_text(self, text):
         newtext = []
         ctr = 0
         strg = ""
@@ -103,7 +105,8 @@ class automaton:
 
 
     def iterateText(self, text):
-        self.texts = [self.concat_text(text)]
+        self.texts = [self.__concat_text(text)]
+        self.paths_of_stats = [ str(self.texts[0]) ]
         print(self.texts[0])
         while True:
             try:
@@ -117,6 +120,7 @@ class automaton:
                 if self.is_accepting_state(s.state):
                     print(f"remaining tuples = {self.stats}")
                     print(f"number of copies of text = {len(self.texts)}")
+                    print(f"path: \n {str(self.paths_of_stats[s.text_version])}")
                     return True
                 elif self.stats.__len__() == 0:
                     return False
@@ -147,15 +151,3 @@ class automaton:
     
     def clear(self):
         self.mess = {}
-
-aut1 = automaton("data.json")
-
-aut1.replace_instructions("st0", "b", "st0", "MVR")
-aut1.add_instruction("st0", "b", "st0", "MVR")
-aut1.print_instructions()
-aut1.save_instructions("data.1.json")
-print(aut1.is_deterministic())
-text = "baa[a,b]aba"
-print(f"iteratin {text}")
-print("---------------------")
-print(aut1.iterateText(text))

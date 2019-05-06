@@ -1,6 +1,7 @@
 { 	"s0" : ["st0", 0],
 	"alfabet" : ["a", "b", "[a,b]"],
 	"sAcc" : ["st0"],
+	"size_of_window": 2,
 	"name": "", 
 	"type": "",
 	"doc_string" : "to co je v pythonu",
