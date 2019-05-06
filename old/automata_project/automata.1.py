@@ -1,5 +1,6 @@
 import itertools
 import json
+import re
 
 class status:
     def __init__(self, state, position, text_version):
@@ -52,12 +53,12 @@ class automaton:
             s = status(new_state, stat.position, len(self.texts) -1)
             self.stats.append(s)
             return
-        elif instruction == "R":
+        elif re.match(r"^\[.*\]$"):
             new_list = self.texts[stat.text_version].copy()
-            
+            new_values = eval(instruction)
             new_list[pos: end_of_pos] = new_values
-            self.texts.append(new_list)
 
+            self.texts.append(new_list)
             s = status(new_state, stat.position, len(self.texts) -1)
             self.stats.append(s)
             return
