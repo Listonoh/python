@@ -17,4 +17,3 @@ def funct(do):
 
 do = int(stdin.readline().split()[0])
 funct(do)
-
