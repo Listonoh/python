@@ -6,3 +6,5 @@
 
 
 ```
+
+specifikace rocnikkoveho projektu

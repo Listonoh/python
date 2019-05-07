@@ -47,14 +47,7 @@ class automaton:
             s = status(new_state, 0, stat.text_version)
             self.stats.append( s)
             return
-        elif instruction == "REM": 
-            new_list = list(self.texts[stat.text_version])
-            del new_list[pos:end_of_pos]
-            self.texts.append(new_list)
-
-            s = status(new_state, stat.position, len(self.texts) -1)
-            self.stats.append(s)
-            return
+        #matching rewritings for remove use "[]"
         elif re.match(r"^\[.*\]$", instruction):
             new_list = self.texts[stat.text_version].copy()
             new_values = eval(instruction)
@@ -84,7 +77,7 @@ class automaton:
         print("----------------------------------", end="\n\n")
             
 
-    def get_window(self, text, position):
+    def __get_window(self, text, position):
         end_of_pos = position + self.size_of_window
         return str(text[position:end_of_pos])
 
@@ -112,7 +105,7 @@ class automaton:
             try:
                 s = self.stats.pop()
                 print(f"     > taking status : {s}")
-                window = self.get_window(self.texts[s.text_version], s.position)
+                window = self.__get_window(self.texts[s.text_version], s.position)
                 print(f" text: {self.texts[s.text_version]}")
                 print(f" window: {window}")
                 self.move(window, s)
