@@ -34,8 +34,8 @@ class matrix:
 
 
         def __eq_(self, second):
-        if self.x != second.x & self.y != second.y:
-            return False
+            if self.x != second.x & self.y != second.y:
+                return False
 
         for i in range(self.x ):
             for j in range(self.y):
