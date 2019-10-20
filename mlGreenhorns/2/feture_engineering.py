@@ -21,6 +21,8 @@ if __name__ == "__main__":
     # TODO(linear_regression_l2): Split the dataset randomly to train
     # and test using `sklearn.model_selection.train_test_split`, with
     # `test_size=args.test_ratio` and `random_state=args.seed`.
+    X_training, X_test, Y_training, Y_test = \
+        sklearn.model_selection.train_test_split(dataset.data, dataset.target, test_size=args.test_size, random_state=args.seed)
 
     # TODO: Process the input columns in the following way:
     # - if a column has only integer values, consider it a categorical column

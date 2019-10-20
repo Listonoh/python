@@ -23,6 +23,7 @@ if __name__ == "__main__":
     target = 2 * target - 1
 
     # TODO: Append a constant feature with value 1 to the end of every input data
+    data = np.pad(data, [(0,0),(0,1)], 'constant', constant_values=1)
 
     # Generate initial perceptron weights
     weights = np.random.uniform(size=data.shape[1])
