@@ -1,5 +1,4 @@
 
-
 def Goldberg(V, E, z, s, c):  # vertexes edges zdroj stok capacity
     f = {(i, j): 0 for i in V for j in V}
     h = [0 for v in V]
@@ -24,7 +23,7 @@ def Goldberg(V, E, z, s, c):  # vertexes edges zdroj stok capacity
                     dif += f[(v, u)] - f[(u, v)]
 
             if dif > 0:
-                finish, find = False
+                finish, find = False, False
                 for e in E:
                     if u in e:
                         if u == e[0]:
@@ -48,6 +47,7 @@ def Goldberg(V, E, z, s, c):  # vertexes edges zdroj stok capacity
     return {key: item for key, item in f.items() if item != 0}
 
 
+#testing data from "pruvodce svetem algoritmu, from Martin Mares"
 V = range(6)
 e = [(0, 1), (0, 3), (1, 2), (1, 4), (3, 2), (3, 4), (4, 5), (2, 5)]
 z = 0
