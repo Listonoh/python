@@ -21,8 +21,7 @@ if __name__ == "__main__":
     # TODO(linear_regression_l2): Split the dataset randomly to train
     # and test using `sklearn.model_selection.train_test_split`, with
     # `test_size=args.test_ratio` and `random_state=args.seed`.
-    X_training, X_test, Y_training, Y_test = \
-        sklearn.model_selection.train_test_split(dataset.data, dataset.target, test_size=args.test_size, random_state=args.seed)
+    train, test = sklearn.model_selection.train_test_split(dataset["data"], test_size=args.test_ratio, random_state=args.seed)
 
     # TODO: Process the input columns in the following way:
     # - if a column has only integer values, consider it a categorical column
@@ -38,6 +37,16 @@ if __name__ == "__main__":
     # In the output, there should be first all the one-hot categorical features,
     # and then the real-valued features. To process different dataset columns
     # differently, you can use `sklearn.compose.ColumnTransformer`.
+    c_features = list(range(dataset["data"].shape[1]))
+    non_c = []
+    for arr in dataset["data"]:
+        for i, element in enumerate(arr):
+            if int(element) != element:
+                if i in c_features:
+                    c_features.remove(i)
+                    non_c.append(i)
+    c_features.sort()
+    non_c.sort()
 
     # TODO: Generate polynomial features of order 2 from the current features.
     # If the input values are [a, b, c, d], you should generate
@@ -45,13 +54,28 @@ if __name__ == "__main__":
     # features either manually, or using
     # `sklearn.preprocess.PolynomialFeatures(2, include_bias=False)`.
 
+    pol = sklearn.preprocessing.PolynomialFeatures(2, include_bias=False, )
+
     # TODO: You can wrap all the feature processing steps into one transformer
     # by using `sklearn.pipeline.Pipeline`. Although not strictly needed, it is
     # usually comfortable.
 
+    pipeline = sklearn.pipeline.Pipeline([
+        ('Transformer', sklearn.compose.ColumnTransformer(
+            [
+                ("categorical", sklearn.preprocessing.OneHotEncoder(), c_features),
+                ("n_categorical", sklearn.preprocessing.StandardScaler(), non_c)
+            ]
+        )),
+        ("Poly", pol)
+    ])
+
     # TODO: Fit the feature processing steps on the training data.
     # Then transform the training data into `train_data` (you can do both these
     # steps using `fit_transform`), and transform testing data to `test_data`.
+
+    train_data = pipeline.fit_transform(train)
+    test_data = pipeline.transform(test)
 
     with open("feature_engineering.out", "w") as output_file:
         for data in [train_data, test_data]:

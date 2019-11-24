@@ -43,5 +43,12 @@ if __name__ == "__main__":
         # For incorrectly examples perform the required update to the `weights`.
         # If all training instances are correctly separated, set `done=True`,
         # otherwise set `done=False`.
+        done = True
+        for i in range(len(data)):
+            y_i = weights.T @ data[i]
+            if target[i] * y_i < 0:
+                weights += target[i]*data[i]
+                done = False
+
 
     print(" ".join("{:.2f}".format(weight) for weight in weights))

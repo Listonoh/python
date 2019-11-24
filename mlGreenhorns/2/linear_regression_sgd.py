@@ -27,13 +27,16 @@ if __name__ == "__main__":
     data, target = sklearn.datasets.make_regression(n_samples=args.examples, random_state=args.seed)
 
     # TODO: Append a constant feature with value 1 to the end of every input data
+    data = np.pad(data, [(0,0),(0,1)], mode='constant', constant_values=1)
 
     rmses = []
     # TODO: Using `split` method of `sklearn.model_selection.KFold(args.folds)`,
     # generate the required number of folds. The folds are returned as
     # a generator of (train_data_indices, test_data_indices) pairs.
-    for train_indices, test_indices in ...:
+    for train_indices, test_indices in sklearn.model_selection.KFold(args.folds).split(data, target):
         # TODO: Generate train_data, train_target, test_data, test_target using the fold indices
+        train_data, test_data = data[train_indices], data[test_indices]
+        train_target, test_target = target[train_indices], target[test_indices]
 
         # Generate initial linear regression weights
         weights = np.random.uniform(size=train_data.shape[1])
@@ -47,6 +50,15 @@ if __name__ == "__main__":
             # A gradient for example (x_i, t_i) is `(x_i^T weights - t_i) * x_i`,
             # and the SGD update is `weights = weights - learning_rate * gradient`.
             # You can assume that `args.batch_size` exactly divides `train_data.shape[0]`.
+            gradients = []
+            for i , counter in zip(permutation, range(1,len(permutation)+1)):
+                gr = (train_data[i].T @ weights - train_target[i]) * train_data[i]
+                gradients.append(gr)
+                if counter % args.batch_size == 0:
+                    gradient = sum(gradients) / args.batch_size
+                    weights = weights - args.learning_rate * gradient
+                    gradients.clear()
+
 
             # We evaluate RMSE on train and test
             rmses[-1].append({
@@ -56,6 +68,10 @@ if __name__ == "__main__":
 
         # TODO: Compute into `explicit_rmse` test data RMSE when
         # fitting `sklearn.linear_model.LinearRegression` on train_data.
+        model = sklearn.linear_model.LinearRegression()
+        model.fit(train_data, train_target)
+        predict = model.predict(test_data)
+        explicit_rmse = np.sqrt(sklearn.metrics.mean_squared_error(predict, test_target))
         print("Test RMSE on fold {}: SGD {:.2f}, explicit {:.2f}".format(len(rmses), rmses[-1][-1]["test"], explicit_rmse))
 
     if args.plot:
